@@ -1,18 +1,24 @@
-import { Slot } from "expo-router";
-import React from "react";
-import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "@/constants"
+import useAuthStore from "@/store/auth.store"
+import { Redirect, Slot } from 'expo-router'
+import React from 'react'
+import { Dimensions, Image, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 
-export default function _Layout() {
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="items-center pt-4">
-        <Text className="mt-6 text-base">Layout Auth</Text>
-      </View>
+export default function AuthLayout() {
 
-      <View className="flex-1 justify-center px-8">
-        <Slot />
-      </View>
-    </SafeAreaView>
-  );
+    const {isAuthenticated} = useAuthStore();
+    if (isAuthenticated) return <Redirect href = "/"/>
+
+    return (
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <ScrollView className="bg-white h-full" keyboardShouldPersistTaps="handled">
+                <View className="w-full relative" style={{ height: Dimensions.get('screen').height / 2.25}}>
+                    <ImageBackground source={images.loginGraphic} className="size-full rounded-b-lg" resizeMode="stretch" />
+                    <Image source={images.logo} className="self-center size-48 absolute -bottom-16 z-10" />
+                </View>
+                <Slot />
+            </ScrollView>
+        </KeyboardAvoidingView>
+    )
 }
+
